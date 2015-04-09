@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 
 object CoreConcepts {
   def main(args: Array[String]) {
-    val x = 10.4
+    val x: Double = 10
     val y = 20.5
     val s = sum(x, y)
     println(f"$x%05.2f + $y%05.2f = $s%05.2f")
