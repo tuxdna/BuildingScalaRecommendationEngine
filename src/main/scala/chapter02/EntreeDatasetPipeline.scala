@@ -28,54 +28,6 @@ import org.apache.log4j.Level
 import kafka.consumer.ConsumerConfig
 import com.mongodb.BasicDBList
 
-case class Restaurant(id: String, name: String, features: Array[String], city: String)
-case class SessionData(datetime: String, ip: String,
-  entryPoint: String, navigations: Array[String], endPoint: String)
-
-trait Constants {
-  val locations = List(
-    "atlanta.txt",
-    "boston.txt",
-    "chicago.txt",
-    "los_angeles.txt",
-    "new_orleans.txt",
-    "new_york.txt",
-    "san_francisco.txt",
-    "washington_dc.txt" //
-    )
-
-  val cityCodes = Map(
-    "A" -> "Atlanta",
-    "B" -> "Boston",
-    "C" -> "Chicago",
-    "D" -> "Los Angeles",
-    "E" -> "New Orleans",
-    "F" -> "New York",
-    "G" -> "San Francisco",
-    "H" -> "Washington DC" //
-    )
-
-  val navigationOperationCodes = Map(
-    "L" -> "browse (move from one restaurant in a list of recommendationsto another)",
-    "M" -> "cheaper (search for a restaurant like this one, but cheaper)",
-    "N" -> "nicer   (search for a restaurant like this one, but nicer)",
-    "O" -> "closer  (unused in the production version of the system)",
-    "P" -> "more traditional (search for a restaurant like this, but serving more traditional cuisine)",
-    "Q" -> "more creative (search for a restaurant serving more creative cuisine)",
-    "R" -> "more lively (search for a restaurant with a livelier atmosphere)",
-    "S" -> "quieter (search for a restaurant with a quieter atmosphere)",
-    "T" -> """change cuisine (search for a restaurant like this, but
-         serving a different kind of food) Note that with this
-         tweak, we would ideally like to know what cuisine the user
-         wanted to change to, but this information was not recorded.""")
-}
-
-case class DataConfig(val datasetPath: String) extends Constants {
-  val dataPath = s"$datasetPath/data"
-  val sessionPath = s"$datasetPath/session"
-  val featuresFile = s"$dataPath/features.txt"
-}
-
 object QueueConfig {
   val producerProps = Map(
     "metadata.broker.list" -> "localhost:9092",
@@ -103,47 +55,6 @@ object QueueConfig {
     props.put("auto.commit.interval.ms", "1000")
     props
   }
-}
-
-object Utilities {
-  def loadLocationData(locationFile: File): Array[Restaurant] = {
-    val src = Source.fromFile(locationFile)
-
-    val locationFeatures = src.getLines.map { line =>
-      val entry = line.split("\t")
-      val restuarantId = entry(0)
-      val restaurantName = entry(1)
-      val features = entry.drop(2)(0)
-      val f = features.trim().split(" ")
-      val city = locationFile.getName().replaceAll(".txt", "")
-      Restaurant(restuarantId, restaurantName, f, city)
-    }.toArray
-    locationFeatures
-  }
-
-  def loadFeaturesMap(featuresFile: String) = {
-    val src = Source.fromFile(featuresFile)
-    val featuresMap = src.getLines.map { line =>
-      val entry = line.split("\t").map(_.trim())
-      entry(0) -> entry(1)
-    }.toMap
-    featuresMap
-  }
-
-  def loadSessionData(sessionFile: String) = {
-    val src = Source.fromFile(sessionFile)
-    val sessions = src.getLines.map { line =>
-      val entry = line.split("\t").map(_.trim())
-      val datetime = entry(0)
-      val ip = entry(1)
-      val entryPoint = entry(2)
-      val navigations = entry.drop(3).dropRight(1)
-      val endPoint = entry.last
-      SessionData(datetime, ip, entryPoint, navigations, endPoint)
-    }.toArray
-    sessions
-  }
-
 }
 
 object DBConfig {
@@ -230,13 +141,13 @@ class MainActor(config: DataConfig) extends Actor {
   def receive = {
     case "begin" => {
       val featuresMap = loadFeaturesMap(config.featuresFile)
-      val restuarants = config.locations.flatMap { location =>
+      val restaurants = config.locations.flatMap { location =>
         loadLocationData(new File(s"${config.dataPath}/" + location))
       }
-      println(s"Number of restuarants: ${restuarants.size}")
+      println(s"Number of restuarants: ${restaurants.size}")
 
       // store all locations to MongoDB
-      for (restaurant <- restuarants) { dbPersister ! restaurant }
+      for (restaurant <- restaurants) { dbPersister ! restaurant }
 
       // load session data
       val sessionFiles = new File(config.sessionPath).list(
@@ -300,11 +211,11 @@ class MessageProducerActor extends Actor {
 object EntreeDatasetPipeline {
   def main(args: Array[String]) {
     val system = ActorSystem("system")
-    val entreeDataPath = "/home/tuxdna/work/packt/dataset/entree"
+    val entreeDataPath = args(0)
     val config = DataConfig(entreeDataPath)
 
     /*
-     * Pipeline basically lookis like this:
+     * Pipeline basically looks like this:
      * 
      * Entree Text files -> Database -> Kafka -> Spark Streaming
      * 
@@ -324,8 +235,6 @@ object EntreeDatasetPipeline {
 
     val conf = new SparkConf(false).setMaster("local[2]").setAppName("Entree")
     val ssc = new StreamingContext(conf, Seconds(2))
-    // val sessionDataStream = ssc.actorStream[SessionData](Props[MessageProducer], "messageProduer")
-    // val consumerConfig = new ConsumerConfig(QueueConfig.consumerProps)
     val receiver = new SessionDataReceiver()
     val sessionDataStream = ssc.receiverStream(receiver)
     val userVisit = sessionDataStream.map(sd => sd.endPoint)
@@ -365,3 +274,7 @@ object EntreeDatasetPipeline {
     ssc.awaitTermination()
   }
 }
+
+
+
+
