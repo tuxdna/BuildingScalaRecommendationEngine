@@ -1,0 +1,18 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET   /                             controllers.Application.index
+GET   /customers                    controllers.CustomerController.list
+GET   /customer/:id                 controllers.CustomerController.get(id: Int)
+GET   /products                     controllers.ProductController.list
+GET   /product/groups/              controllers.ProductController.getGroups
+GET   /product/group/:group         controllers.ProductController.getForGroup(group: String)
+GET   /product/asin/:asin           controllers.ProductController.get(asin: String)
+GET   /recommendation/topRated      controllers.RecommendationController.topRated
+GET   /recommendation/mostPopular   controllers.RecommendationController.mostPopular
+
+# Map static resources from the /public folder to the /assets URL path
+GET   /webjars/*file                controllers.WebJarAssets.at(file)
+GET   /assets/*file                 controllers.Assets.at(path="/public", file)

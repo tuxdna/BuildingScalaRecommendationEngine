@@ -1,0 +1,38 @@
+@(itemOpt: Option[model.AmazonMeta])
+
+@itemOpt.map { item =>
+	  <a href="/product/asin/@item.asin"><b>@(item.title)</b></a>
+	  <a href="/product/group/@item.group">(@item.group)</a>
+	                       <br/>
+	  ASIN: @item.asin           <br/>
+	  Title: @item.title          <br/>
+	  Sales Rank: @item.salesrank      <br/>
+	  Similar Items: </br>
+	  @for(s <- item.similar) {
+	  	<a href="/product/asin/@s">@s</a> 
+	  }        <br/>
+	   <br/>
+	  Categories: </br>
+	  @for(cat <- item.categories) {
+	    @{cat.map(_.name).mkString("/")} </br>
+	  }
+	       <br/>
+	  Overall Review:
+	   Total(@item.overallReview.total),
+	   Downloaded(@item.overallReview.downloaded),
+	    Average Rating (@item.overallReview.averageRating)
+       <br/>
+        <br/>
+       Reviews:  <br/>
+        <br/>
+	  @for(review <- item.reviews) {
+	  	Date: @review.date <br/>
+	  	Customer: @review.customer <br/>
+	  	Rating: @review.rating <br/>
+	  	Rating: @review.votes <br/>
+	  	Helpful: @review.helpful <br/>
+	  	 <br/>
+	  	}
+	  	        <br/>
+	  
+}

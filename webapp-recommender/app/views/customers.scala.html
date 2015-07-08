@@ -1,0 +1,10 @@
+@(items: Seq[model.Customer])
+
+@main("Customers", "customers") {
+
+	@for( item <- items) {
+	  <a href="/customer/@{item.Number}"><b>@(item.GivenName) @(item.Surname)</b></a>
+	  </br>
+	}
+
+}

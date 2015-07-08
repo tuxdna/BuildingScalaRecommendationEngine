@@ -1,0 +1,9 @@
+@(items: Seq[model.AmazonMeta])
+
+@main("Product Listing", "products") {
+	@for( item <- items) {
+	  <a href="/product/asin/@item.asin"><b>@(item.title)</b></a>
+	  <a href="#">(@item.group)</a>
+	  </br>
+	}
+}

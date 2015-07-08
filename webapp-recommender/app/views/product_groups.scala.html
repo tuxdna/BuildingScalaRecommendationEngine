@@ -1,0 +1,8 @@
+@(groups: Seq[String])
+
+@main("Product Groups", "groups") {
+	@for( group <- groups) {
+	  <a href="/product/group/@group"><b>@group</b></a>
+	  </br>
+	}
+}

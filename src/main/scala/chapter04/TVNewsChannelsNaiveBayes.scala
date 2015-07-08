@@ -1,18 +1,11 @@
 package chapter04
 
-import scala.io.Source
 import java.io.File
-import org.apache.spark.mllib.util.MLUtils
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.rdd.RDD
-import org.apache.spark.mllib.linalg
+
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.classification.SVMWithSGD
 import org.apache.spark.mllib.classification.NaiveBayes
-import org.apache.spark.mllib.classification.NaiveBayesModel
-import java.io.PrintWriter
+import org.apache.spark.mllib.util.MLUtils
 
 object TVNewsChannelsNaiveBayes {
   def main(args: Array[String]) {
