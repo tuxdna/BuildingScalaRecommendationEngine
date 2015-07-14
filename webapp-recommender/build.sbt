@@ -23,6 +23,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "bootstrap" % "3.1.1",
   "org.webjars" % "html5shiv" % "3.7.0",
   "org.webjars" % "respond" % "1.4.2",
+  "com.twitter" %% "algebird-core" % "0.9.0",                 // Twitter Algebird
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",   // HTTP client
   "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka22", // MongoDB Reactive
   "org.mongodb" %% "casbah" % "2.8.1"                       // MongoDB Casbah

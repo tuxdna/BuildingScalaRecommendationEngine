@@ -39,7 +39,7 @@ object TopKProducts {
 
     val productIdRDD = mongoRDD.map { arg =>
       val (objId, bsonObj) = arg
-      var asin = bsonObj.get("productId").toString.toDouble.toLong
+      val asin = bsonObj.get("productId").toString.toDouble.toLong
       asin
     }
 
