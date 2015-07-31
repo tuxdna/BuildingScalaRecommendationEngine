@@ -1,12 +1,16 @@
 name := "BuildingScalaRecommendationEngine"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.4"
 
 // scalaVersion := "2.11.5"
 
 version :="1.0"
 
-libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
+ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
+
+// libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
+
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.4"
 
 // libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
 
@@ -20,7 +24,7 @@ libraryDependencies += "org.apache.spark" %% "spark-streaming" % "1.3.0"
 
 libraryDependencies += "org.mongodb" %% "casbah" % "2.8.1"
 
-libraryDependencies += "org.apache.kafka" % "kafka_2.11" % "0.8.2.0"
+libraryDependencies += "org.apache.kafka" %% "kafka" % "0.8.2.0"
 
 libraryDependencies += "org.apache.lucene" % "lucene-core" % "3.6.2"
 
@@ -43,4 +47,11 @@ libraryDependencies += "org.mongodb" % "mongo-java-driver" % "2.11.4"
 
 libraryDependencies += "com.twitter" %% "algebird-core" % "0.9.0"
 
+libraryDependencies += "com.databricks" %% "spark-csv" % "1.1.0"
+
+libraryDependencies += "commons-io" % "commons-io" % "2.4"
+
+
 retrieveManaged := true
+
+
