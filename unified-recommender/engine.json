@@ -1,0 +1,32 @@
+{
+  "id": "default",
+  "description": "Default settings",
+  "engineFactory": "com.example.urec.RecommendationEngine",
+  "datasource": {
+    "params" : {
+      "name": "sample-handmade-data.txt",
+      "appName": "urec-app",
+      "eventNames": ["purchase", "view"]
+    }
+  },
+  "sparkConf": {
+    "spark.serializer": "org.apache.spark.serializer.KryoSerializer",
+    "spark.kryo.registrator": "org.apache.mahout.sparkbindings.io.MahoutKryoRegistrator",
+    "spark.kryo.referenceTracking": "false",
+    "spark.kryoserializer.buffer.mb": "300",
+    "spark.executor.memory": "4g",
+    "es.index.auto.create": "true"
+  },
+  "algorithms": [
+    {
+      "comment": "setup for example 'handmade' data, make sure to change for your needs",
+      "name": "ur",
+      "params": {
+        "appName": "urec-app",
+        "indexName": "urindex",
+        "typeName": "items",
+        "eventNames": ["purchase", "view"]
+      }
+    }
+  ]
+}
