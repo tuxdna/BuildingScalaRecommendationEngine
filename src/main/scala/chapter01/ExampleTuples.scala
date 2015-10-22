@@ -3,7 +3,7 @@ package chapter01
 object ExampleTuples {
   def main(args: Array[String]) {
     val tuple1 = Tuple1(1)
-    val tuple2 = ('a', 1)
+    val tuple2 = ('a', 1) // can also be defined: ('a' -> 1)
     val tuple3 = ('a', 1, "name")
 
     // Access tuple members by underscore followed by 
@@ -15,9 +15,3 @@ object ExampleTuples {
     
   }
 }
-
-
-
-
-
-

@@ -20,10 +20,10 @@ object ExampleCaseClasses {
 
     employees foreach println
 
-    val hasChan = """(Lee).*""".r
+    val hasLee = """(Lee).*""".r
     for (employee <- employees) {
       employee match {
-        case Employee(hasChan(x), age) => println("Found a Lee!")
+        case Employee(hasLee(x), age) => println("Found a Lee!")
         case _ => // Do nothing
       }
     }
