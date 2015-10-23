@@ -40,3 +40,15 @@ object AmazonMeta {
   implicit val amazonRatingHandler = Macros.handler[AmazonMeta]
   implicit val amazonRatingFormat = Json.format[AmazonMeta]
 }
+
+case class CustomerMapping(
+  customer_number: Double,
+  _id: String) {
+  def customerId = _id
+  def customerNumber = customer_number
+}
+
+object CustomerMapping {
+  implicit val customerMappingHandler = Macros.handler[CustomerMapping]
+  implicit val customerMappingFormat = Json.format[CustomerMapping]
+}

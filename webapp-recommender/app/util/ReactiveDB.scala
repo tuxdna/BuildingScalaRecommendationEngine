@@ -1,19 +1,20 @@
 package util
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.mongodb.casbah.MongoClient
-import model.AmazonMeta
-import model.Customer
+import configuration.AppConfig
+import model.{ AmazonMeta, Customer }
 import reactivemongo.api.MongoDriver
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDouble }
 import reactivemongo.bson.Producer.nameValue2Producer
-import reactivemongo.bson.BSONDateTime
-import java.util.Date
-import model.Review
-import scala.concurrent.Await
-import reactivemongo.bson.BSONDouble
+import scala.concurrent.ExecutionContext.Implicits.global
+import model.CustomerMapping
+import scala.concurrent.Future
+import play.Logger
 
 object ReactiveDB {
+
+  val DBConfig = AppConfig.DBConfig
+
   def getCollection(collectionName: String) = {
     val mongoClient = MongoClient(DBConfig.dbHost, DBConfig.dbPort)
     val db = mongoClient(DBConfig.dbName)
@@ -33,6 +34,14 @@ object ReactiveDB {
     val connection = driver.connection(List(DBConfig.dbHost))
     val db = connection(DBConfig.dbName)
     val collection = db("customers")
+    collection
+  }
+
+  def customerMappingCollection() = {
+    val driver = new MongoDriver
+    val connection = driver.connection(List(DBConfig.dbHost))
+    val db = connection(DBConfig.dbName)
+    val collection = db("customer_mapping")
     collection
   }
 
@@ -102,6 +111,33 @@ object ReactiveDB {
     rs
   }
 
+  def getOneCustomerByNumber(number: Int): Future[Option[(Customer, Option[String])]] = {
+    val itemCursor = getCustomerByNumber(number)
+    val optF = itemCursor.headOption
+
+    val p = for {
+      customerOpt <- optF
+      t <- customerOpt match {
+        case Some(customer) =>
+          val f1 = Recommender.findOneAmazonCustomerForNumber(customer.Number)
+            .map { x =>
+              val y = Some(customer, x)
+              y
+            }
+          f1.onFailure {
+            case t: Throwable => Logger.info(s"onFailure: $t")
+          }
+          f1.fallbackTo(Future {
+            val y = Some(customer, None)
+            y
+          })
+        case None =>
+          Future(None)
+      }
+    } yield t
+    p.fallbackTo(Future(None))
+  }
+
   def getCustomerByID(id: String) = {
     val collection = customerCollection()
     val query = BSONDocument("id" -> id)
@@ -141,6 +177,13 @@ object ReactiveDB {
       .cursor[BSONDocument]
 
     cursor
+  }
+
+  def getAmazonCustomersForCustomerNumber(number: Int) = {
+    val collection = customerMappingCollection()
+    val query = BSONDocument("customer_number" -> number)
+    val rs = collection.find(query).cursor[CustomerMapping]
+    rs
   }
 
   import scala.concurrent._

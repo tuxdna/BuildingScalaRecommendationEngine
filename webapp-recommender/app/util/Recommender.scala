@@ -14,6 +14,8 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import com.twitter.algebird.TopCMS
 import reactivemongo.bson.BSONString
+import model.CustomerMapping
+import play.Logger
 
 object Recommender {
   val useCMS = true
@@ -82,6 +84,23 @@ object Recommender {
       }
 
     }
+  }
+
+  def findAmazonCustomerIdsForNumber(number: Int): Future[Seq[String]] = {
+    val cursor = ReactiveDB.getAmazonCustomersForCustomerNumber(number)
+    val lstF = cursor.collect[List](10, true)
+    lstF.map(_.map(_.customerId))
+  }
+
+  def findOneAmazonCustomerForNumber(number: Int): Future[Option[String]] = {
+    val cursor = ReactiveDB.getAmazonCustomersForCustomerNumber(number)
+    val x = for {
+      a <- cursor.headOption
+    } yield {
+      Logger.debug(s"findOneAmazonCustomerForNumber: $a")
+      a.map(_.customerId)
+    }
+    x
   }
 
   def main(args: Array[String]) {

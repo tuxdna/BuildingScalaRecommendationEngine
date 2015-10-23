@@ -1,15 +1,19 @@
 package util
 
 import com.mongodb.casbah.MongoClient
+import configuration.AppConfig
 
 object Database {
+
+  val DBConfig = AppConfig.DBConfig
+
   def getCollection(collectionName: String) = {
     val mongoClient = MongoClient(DBConfig.dbHost, DBConfig.dbPort)
     val db = mongoClient(DBConfig.dbName)
     db(collectionName)
   }
 
-  lazy val productsCollection = getCollection(DBConfig.products)
+  lazy val productsCollection = getCollection("products")
 
   private def deleteAll() = {
     productsCollection.drop()

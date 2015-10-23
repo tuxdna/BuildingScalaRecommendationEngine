@@ -1,4 +1,55 @@
-
 @main("Welcome", "homepage") {
 	Welcome to Amazing Product Recommendation v 1.0
+
+	<div>
+		<label for="searchQuery">Search: <input id="searchQuery"
+			type="text" id="searchQuery" />
+		</label>
+		<button id="searchButton" onclick="">
+		Search
+		</button>
+	</div>
+	<div id="searchResults">
+	Search Results
+	</div>
+
+	<script lang="text/javascript">
+		function searchHandler() {
+			var q = $("#searchQuery").val();
+			if (q) {
+				// alert("Selected: " + year + ", " + month);
+			} else {
+				alert("Empty query string");
+				return;
+			}
+
+			$("#searchResults").html("Loading...");
+
+
+			var searchUrl = "/search/?q="+q;
+			$.get(searchUrl, function(data) {
+				var hits = data.hits.hits;
+				var i;
+				var htmlText = "Total hits: "+data.hits.total+"<br/>\n";
+				for( i = 0; i < hits.length; i++) {
+				   var hit = hits[i]._source;
+				   var asin = hit.asin;
+				   var title = hit.title + "    (" + hit.group + ")";
+				   var tags = "<a href='/product/asin/"+asin+"'>"+title+"</a>";
+				   htmlText = htmlText + tags + "<br/>\n";
+				}
+				   htmlText = htmlText + "";
+				$("#searchResults").html(htmlText);
+			});
+
+		}
+
+        $("#searchQuery").keypress(function(e) {
+            if(e.which == 13) {
+               searchHandler();
+            }
+        });
+		$("#searchButton").click(searchHandler);
+	</script>
+
 }

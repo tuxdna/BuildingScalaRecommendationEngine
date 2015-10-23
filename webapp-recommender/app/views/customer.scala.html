@@ -1,6 +1,15 @@
-@(itemOpt: Option[model.Customer])
+@(itemOpt: Option[(model.Customer, Option[String])])
 
 @main("Customer Details", "customer") {
-	@customer_view(itemOpt)
+	@for(item <- itemOpt) {
+    	@customer_view(Some(item._1))
+    	
+		@defining(item._2) { amazonItemOpt =>
+			@amazonItemOpt.map { aitem =>
+				<br/>
+				Amazon Customer ID:	<b>@aitem</b>
+			}
+		}
+	}
 }
 

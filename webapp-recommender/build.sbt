@@ -26,7 +26,8 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "algebird-core" % "0.9.0",                 // Twitter Algebird
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",   // HTTP client
   "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka22", // MongoDB Reactive
-  "org.mongodb" %% "casbah" % "2.8.1"                       // MongoDB Casbah
+  "org.mongodb" %% "casbah" % "2.8.1",                       // MongoDB Casbah
+  "com.sksamuel.elastic4s" %% "elastic4s" % "1.4.14"
 )
 
 play.Project.playScalaSettings
