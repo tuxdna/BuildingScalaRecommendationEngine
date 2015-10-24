@@ -82,7 +82,7 @@ class RecommendationServiceActor extends Actor with RecommendationService {
 }
 
 object SharedData {
-  val modelPath = "models/ALSExampleModel/"
+  val modelPath = "models/AmazonRatingsALSModel/"
   val asinToIdPath = "mappings/asinToId"
   val customerToIdPath = "mappings/customerToId"
 

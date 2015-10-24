@@ -19,8 +19,7 @@
 		function searchHandler() {
 			$("#userRecommendations").html("Loading...");
 
-			var q = "A2366KBMIS0Z1Z";
-			var dataUrl = "/recommendation/for/customer/" + q + "/";
+			var dataUrl = "/recommendation/for/customer/@aitem/";
 			$.get(dataUrl, function(data) {
 				var hits = data.results;
 				var i;
