@@ -1,8 +1,14 @@
 @(itemOpt: Option[model.AmazonMeta])
+@import util.ReactiveDB.getCustomerNumber
 
 @itemOpt.map { item =>
+	  <table>
+	    <tr>
+	      <td valign="top" width="40%">
+<div>
 	  <a href="/product/asin/@item.asin"><b>@(item.title)</b></a>
 	  <a href="/product/group/@item.group">(@item.group)</a>
+
 	                       <br/>
 	  ASIN: @item.asin           <br/>
 	  Title: @item.title          <br/>
@@ -12,11 +18,14 @@
 	  	<a href="/product/asin/@s">@s</a> 
 	  }        <br/>
 	   <br/>
-	  Categories: </br>
+	  Categories: </br></br>
 	  @for(cat <- item.categories) {
 	    @{cat.map(_.name).mkString("/")} </br>
 	  }
-	       <br/>
+	      </td>
+
+	      <td>
+<div>
 	  Overall Review:
 	   Total(@item.overallReview.total),
 	   Downloaded(@item.overallReview.downloaded),
@@ -27,12 +36,16 @@
         <br/>
 	  @for(review <- item.reviews) {
 	  	Date: @review.date <br/>
-	  	Customer: @review.customer <br/>
+	  	Customer: <a href="/customer/@{getCustomerNumber(review.customer)}">@review.customer</a> <br/>
 	  	Rating: @review.rating <br/>
 	  	Rating: @review.votes <br/>
 	  	Helpful: @review.helpful <br/>
 	  	 <br/>
 	  	}
-	  	        <br/>
+</div>
+	      </td>
+
+	    </tr>
+	  </table>
 	  
 }

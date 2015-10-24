@@ -2,16 +2,17 @@
 
 @main("Customer Details", "customer") {
 	@for(item <- itemOpt) {
+<table>
+<tr>
+<td valign="top">
     	@customer_view(Some(item._1))
-    	
+</td>
+<td valign="top">
 		@defining(item._2) { amazonItemOpt =>
 			@amazonItemOpt.map { aitem =>
-				<br/>
 				Amazon Customer ID:	<b>@aitem</b>
 				<div>
-				<br/>
-				Atmost top 10 Recommendations
-				<div id="userRecommendations"></div>
+				  Top 10 recommendations <div id="userRecommendations">Loading...</div>
 				</div>
 				
 	<script lang="text/javascript">
@@ -26,7 +27,7 @@
 				var htmlText = data.message + "<br/>\n";
 				for (asin in hits) {
 					var rating = hits[asin];
-				    var tags = "<a target='_blank' href='/product/asin/"+asin+"'>"+asin+" Predicted Rating: ("+rating+")"+"</a>";
+				    var tags = "<a target='_blank' href='/product/asin/"+asin+"'>"+asin+" ("+rating+")"+"</a>";
 					htmlText = htmlText + tags + "<br/>\n";
 				}
 				htmlText = htmlText + "";
@@ -36,6 +37,9 @@
 		}
 		$(document).ready(searchHandler());
 	</script>
+</td>
+</tr>
+</table>
 			}
 		}
 	}

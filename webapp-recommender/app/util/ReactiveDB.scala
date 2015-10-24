@@ -1,6 +1,6 @@
 package util
 
-import com.mongodb.casbah.MongoClient
+import com.mongodb.casbah.{ MongoCollection, MongoClient }
 import configuration.AppConfig
 import model.{ AmazonMeta, Customer }
 import reactivemongo.api.MongoDriver
@@ -10,6 +10,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import model.CustomerMapping
 import scala.concurrent.Future
 import play.Logger
+
+import scala.concurrent._
+import scala.concurrent.duration._
 
 object ReactiveDB {
 
@@ -186,8 +189,13 @@ object ReactiveDB {
     rs
   }
 
-  import scala.concurrent._
-  import scala.concurrent.duration._
+  def getCustomerNumber(custID: String): Int = {
+    val collection = customerMappingCollection()
+    val query = BSONDocument("_id" -> custID)
+    val cursor = collection.find(query).cursor[CustomerMapping]
+    val result = cursor.headOption.map(_.map(_.customerNumber.toInt).getOrElse(0))
+    Await.result(result, 10 seconds)
+  }
 
   def main(args: Array[String]) {
     val c = oneMonthReviewsFrom(2005, 1)
