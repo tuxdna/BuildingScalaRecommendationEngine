@@ -8,6 +8,35 @@
 			@amazonItemOpt.map { aitem =>
 				<br/>
 				Amazon Customer ID:	<b>@aitem</b>
+				<div>
+				<br/>
+				Atmost top 10 Recommendations
+				<div id="userRecommendations"></div>
+				</div>
+				
+	<script lang="text/javascript">
+		console.log("searching user recommendations");
+		function searchHandler() {
+			$("#userRecommendations").html("Loading...");
+
+			var q = "A2366KBMIS0Z1Z";
+			var dataUrl = "/recommendation/for/customer/" + q + "/";
+			$.get(dataUrl, function(data) {
+				var hits = data.results;
+				var i;
+				var htmlText = data.message + "<br/>\n";
+				for (asin in hits) {
+					var rating = hits[asin];
+				    var tags = "<a target='_blank' href='/product/asin/"+asin+"'>"+asin+" Predicted Rating: ("+rating+")"+"</a>";
+					htmlText = htmlText + tags + "<br/>\n";
+				}
+				htmlText = htmlText + "";
+				$("#userRecommendations").html(htmlText);
+			});
+
+		}
+		$(document).ready(searchHandler());
+	</script>
 			}
 		}
 	}

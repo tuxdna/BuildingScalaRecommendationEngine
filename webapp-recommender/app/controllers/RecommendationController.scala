@@ -44,4 +44,11 @@ object RecommendationController extends Controller {
     }
   }
 
+  def recommendationsForCustomer(customerId: String) = Action.async {
+    val tpF = Recommender.findForCustomer(customerId)
+    tpF.map { items =>
+      Ok(Json.toJson(items))
+    }
+  }
+
 }

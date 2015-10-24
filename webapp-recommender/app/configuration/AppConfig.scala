@@ -17,4 +17,9 @@ object AppConfig {
     val dbName = c.getString("mongodb.database").get
   }
 
+  object RS {
+    val host = c.getString("recommenderService.host").get
+    val port = c.getInt("recommenderService.port").get
+  }
+
 }

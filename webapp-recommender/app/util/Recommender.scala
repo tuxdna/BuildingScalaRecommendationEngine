@@ -16,6 +16,10 @@ import com.twitter.algebird.TopCMS
 import reactivemongo.bson.BSONString
 import model.CustomerMapping
 import play.Logger
+import play.libs.Json
+import play.api.libs.ws.WS
+import play.api.libs.json.JsValue
+import configuration.AppConfig
 
 object Recommender {
   val useCMS = true
@@ -101,6 +105,15 @@ object Recommender {
       a.map(_.customerId)
     }
     x
+  }
+
+  def findForCustomer(customerId: String): Future[JsValue] = {
+    val host = AppConfig.RS.host
+    val port = AppConfig.RS.port
+    val url = s"http://$host:$port/recommendations/foruser/$customerId"
+    for (response <- WS.url(url).get()) yield {
+      response.json
+    }
   }
 
   def main(args: Array[String]) {

@@ -17,6 +17,7 @@ GET   /recommendation/trends                            controllers.Recommendati
 
 GET   /recommendation/trending/product/:year/:month/    controllers.RecommendationController.trendingProduct(year: Int, month: Int)
 GET   /recommendation/trending/customer/:year/:month/   controllers.RecommendationController.trendingCustomer(year: Int, month: Int)
+GET   /recommendation/for/customer/:id/                 controllers.RecommendationController.recommendationsForCustomer(id: String)
 
 GET   /search/                                          controllers.SearchController.searchProducts()
 
