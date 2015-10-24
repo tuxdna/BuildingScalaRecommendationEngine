@@ -3,11 +3,11 @@ package chapter06
 import scala.Array.canBuildFrom
 import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe.TypeTag.Int
+
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.KMeans
 import org.apache.spark.mllib.feature.HashingTF
-import org.apache.spark.mllib.feature.Normalizer
 import org.apache.spark.mllib.linalg.SparseVector
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.linalg.Vectors
@@ -15,23 +15,12 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.functions.udf
-import org.apache.spark.mllib.feature.StandardScaler
 
 object ContentBasedRSExample {
 
   val colSep = "\t"
   val catSep = "::"
   val titleToTerms = (title: String) => title.toLowerCase().replaceAll("""[^\w\s]+""", "").split(" ")
-
-  val toVec4 = udf[Vector, Int, Int, String, String] { (a, b, c, d) =>
-    val e3 = c match {
-      case "hs-grad" => 0
-      case "bachelors" => 1
-      case "masters" => 2
-    }
-    val e4 = d match { case "male" => 0 case "female" => 1 }
-    Vectors.dense(a, b, e3, e4)
-  }
 
   val dim = math.pow(2, 10).toInt
   val hashingTF = new HashingTF(dim)

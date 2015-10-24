@@ -2,11 +2,18 @@ name := "BuildingScalaRecommendationEngine"
 
 scalaVersion := "2.10.4"
 
+// val sprayVersion = "1.3.3"
+
+
 // scalaVersion := "2.11.5"
 
-version :="1.0"
+javaOptions in(Test, run) += "-XX:+UseConcMarkSweepGC"
 
-ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
+version := "1.0"
+
+ivyScala := ivyScala.value map {
+  _.copy(overrideScalaVersion = true)
+}
 
 // libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
@@ -50,6 +57,20 @@ libraryDependencies += "com.twitter" %% "algebird-core" % "0.9.0"
 libraryDependencies += "com.databricks" %% "spark-csv" % "1.1.0"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
+
+libraryDependencies += "com.sksamuel.elastic4s" %% "elastic4s" % "1.4.14"
+
+libraryDependencies += "io.spray" %% "spray-can" % "1.3.3"
+
+libraryDependencies += "io.spray" %% "spray-routing" % "1.3.3"
+
+libraryDependencies += "io.spray" %% "spray-json" % "1.3.2"
+
+// val akkaV = "2.3.9"
+// "io.spray"            %%  "spray-testkit" % sprayVersion  % "test",
+// "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
+// "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
+// "org.specs2"          %%  "specs2-core"   % "2.3.7" % "test"
 
 
 retrieveManaged := true

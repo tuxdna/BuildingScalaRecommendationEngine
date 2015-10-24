@@ -10,6 +10,11 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 
 object AmazonRatingsALS {
+  def removePathIfExists(path: String): Unit = {
+    if (new File(path).exists()) {
+      FileUtils.deleteDirectory(new File(path))
+    }
+  }
 
   def main(args: Array[String]): Unit = {
     val conf = new SparkConf(false)
@@ -28,15 +33,24 @@ object AmazonRatingsALS {
     val rawData = sc.textFile(fileName, 100).
       map(_.split("\t")).
       flatMap { arr =>
-        if (arr.length == 3) {
-          val Array(c, a, r) = arr
-          if (r.equals("rating")) None
-          else Some((c, a, r.toDouble))
-        } else None
-      }
+      if (arr.length == 3) {
+        val Array(c, a, r) = arr
+        if (r.equals("rating")) None
+        else Some((c, a, r.toDouble))
+      } else None
+    }
 
-    val customerToId = rawData.map(_._1).distinct().zipWithUniqueId().collectAsMap
-    val asinToId = rawData.map(_._2).distinct().zipWithUniqueId().collectAsMap
+    val customerToIdRDD = rawData.map(_._1).distinct().zipWithUniqueId()
+    val asinToIdRDD = rawData.map(_._2).distinct().zipWithUniqueId()
+    val custFile = "mappings/customerToId"
+    val asinFile = "mappings/asinToId"
+    removePathIfExists(custFile)
+    removePathIfExists(asinFile)
+    customerToIdRDD.map { case (x, y) => s"$x,$y" }.saveAsTextFile(custFile)
+    asinToIdRDD.map { case (x, y) => s"$x,$y" }.saveAsTextFile(asinFile)
+
+    val customerToId = customerToIdRDD.collectAsMap
+    val asinToId = asinToIdRDD.collectAsMap
 
     val ratingsRDD = rawData.map { t =>
       val (c, a, r) = t
@@ -68,9 +82,7 @@ object AmazonRatingsALS {
 
     // Save and load model
     val modelPath = "models/AmazonRatingsALSModel"
-    if (new File(modelPath).exists()) {
-      FileUtils.deleteDirectory(new File(modelPath))
-    }
+    removePathIfExists(modelPath)
     model.save(sc, modelPath)
     println(s"Model saved to: $modelPath")
     val sameModel = MatrixFactorizationModel.load(sc, modelPath)
