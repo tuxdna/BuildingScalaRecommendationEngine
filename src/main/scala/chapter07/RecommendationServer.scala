@@ -72,10 +72,6 @@ trait RecommendationService extends HttpService {
 
 class RecommendationServiceActor extends Actor with RecommendationService {
 
-  //  val asinToIdMap: Map[String, Int] = SharedData.asinToIdMap
-  //  val customerToIdMap: Map[String, Int] = SharedData.customerToIdMap
-  //  val alsModel = SharedData.alsModel
-
   def actorRefFactory = context
 
   def receive = runRoute(myRoute)
