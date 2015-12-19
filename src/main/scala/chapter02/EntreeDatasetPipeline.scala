@@ -235,6 +235,7 @@ object EntreeDatasetPipeline {
 
     val conf = new SparkConf(false).setMaster("local[2]").setAppName("Entree")
     val ssc = new StreamingContext(conf, Seconds(2))
+
     val receiver = new SessionDataReceiver()
     val sessionDataStream = ssc.receiverStream(receiver)
     val userVisit = sessionDataStream.map(sd => sd.endPoint)
